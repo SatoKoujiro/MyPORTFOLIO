@@ -1,0 +1,131 @@
+
+{
+  "scenarios": [
+    {
+      "id": "start",
+      "name": "ナレーション",
+      "text": "雨は、もう三日も降り続いていた。都の町には人影もなく、崩れかけた羅城門だけが、暗い空の下に立っていた。",
+      "background": "gate_rain",
+      "character": "",
+      "choices": [],
+      "nextId": "start_2"
+    },
+    {
+      "id": "start_2",
+      "name": "下人",
+      "text": "さて、どうしたものか。このままでは飢え死にするばかりだ。",
+      "background": "gate_rain",
+      "character": "servant",
+      "choices": [
+        {
+          "text": "門の上へ行ってみる",
+          "nextId": "gate_up"
+        },
+        {
+          "text": "このまま雨宿りをする",
+          "nextId": "wait"
+        }
+      ],
+      "nextId": ""
+    },
+    {
+      "id": "wait",
+      "name": "ナレーション",
+      "text": "しばらくすると、門の上からかすかな灯りが漏れていることに気づいた。",
+      "background": "gate_rain",
+      "character": "",
+      "choices": [],
+      "nextId": "gate_up"
+    },
+    {
+      "id": "gate_up",
+      "name": "ナレーション",
+      "text": "梯子を上った先には、いくつもの死体が横たわっていた。その傍らで、一人の老婆が何かをしている。",
+      "background": "gate_inside",
+      "character": "servant",
+      "choices": [],
+      "nextId": "old_woman"
+    },
+    {
+      "id": "old_woman",
+      "name": "老婆",
+      "text": "ひひ……これはよい髪じゃ。鬘にすれば、まだ売れる。",
+      "background": "gate_inside",
+      "character": "old_woman",
+      "choices": [
+        {
+          "text": "老婆を問い詰める",
+          "nextId": "question"
+        },
+        {
+          "text": "何も見なかったことにして逃げる",
+          "nextId": "escape"
+        }
+      ],
+      "nextId": ""
+    },
+    {
+      "id": "escape",
+      "name": "ナレーション",
+      "text": "下人は老婆に背を向けた。雨の中へ消えていくその背中に、老婆の笑い声だけがいつまでも響いていた。",
+      "background": "gate_rain",
+      "character": "",
+      "choices": [],
+      "nextId": "end_a"
+    },
+    {
+      "id": "question",
+      "name": "下人",
+      "text": "何をしている。死人の髪を抜くとは、恥ずかしくないのか。",
+      "background": "gate_inside",
+      "character": "servant",
+      "choices": [],
+      "nextId": "answer"
+    },
+    {
+      "id": "answer",
+      "name": "老婆",
+      "text": "生きるためじゃ。わしも生きねばならぬ。この女も、生きていたころには人を欺いていた。ならば、わしが髪を取っても恨むまい。",
+      "background": "gate_inside",
+      "character": "old_woman",
+      "choices": [
+        {
+          "text": "老婆の言葉を理解し、立ち去る",
+          "nextId": "end_c"
+        },
+        {
+          "text": "生きるためなら自分も盗みをしてよいと考える",
+          "nextId": "end_b"
+        }
+      ],
+      "nextId": ""
+    },
+    {
+      "id": "end_a",
+      "name": "ナレーション",
+      "text": "下人は何もせず、雨の闇へと消えていった。しかし、明日を生きるための答えは、まだ見つからなかった。",
+      "background": "gate_rain",
+      "character": "",
+      "choices": [],
+      "nextId": ""
+    },
+    {
+      "id": "end_b",
+      "name": "ナレーション",
+      "text": "下人は老婆の着物を奪い、暗闇へと駆け出した。雨はその背中を冷たく打ち続けた。下人は、もう以前の自分には戻れなかった。",
+      "background": "gate_inside",
+      "character": "",
+      "choices": [],
+      "nextId": ""
+    },
+    {
+      "id": "end_c",
+      "name": "ナレーション",
+      "text": "下人は老婆を見つめた後、静かに門を下りた。正しい生き方など、どこにもないのかもしれない。それでも、何を選ぶかは自分で決めるしかなかった。",
+      "background": "gate_rain",
+      "character": "",
+      "choices": [],
+      "nextId": ""
+    }
+  ]
+}
