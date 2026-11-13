@@ -28,6 +28,7 @@ public class TypewriterEffect : MonoBehaviour
 
         messageText.text = text;
         messageText.maxVisibleCharacters = 0;
+        messageText.ForceMeshUpdate();
 
         int characterCount = messageText.textInfo.characterCount;
 

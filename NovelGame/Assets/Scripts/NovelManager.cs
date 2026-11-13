@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class NovelManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class NovelManager : MonoBehaviour
     [SerializeField] private TMP_Text nameText;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image characterImage;
+    [SerializeField] private GameObject choicePanel;
 
     [Header("Systems")]
     [SerializeField] private TypewriterEffect typewriter;
@@ -20,6 +22,8 @@ public class NovelManager : MonoBehaviour
     private ScenarioLoader scenarioLoader;
     private ScenarioData currentScenario;
 
+    private Button[] choiceButtons;
+    private TMP_Text[] choiceLabels;
     private bool isChoiceShowing = false;
 
     private void Start()
@@ -29,6 +33,7 @@ public class NovelManager : MonoBehaviour
         if (!scenarioLoader.Load("scenario"))
             return;
 
+        InitializeChoiceUI();
         typewriter.OnTypingCompleted += HandleTypingCompleted;
 
         ShowScenario(startId);
@@ -78,6 +83,7 @@ public class NovelManager : MonoBehaviour
     private void ShowScenario(string id)
     {
         nextIndicator.Hide();
+        isChoiceShowing = false;
 
         currentScenario = scenarioLoader.GetScenario(id);
 
@@ -125,9 +131,117 @@ public class NovelManager : MonoBehaviour
 
     private void ShowChoices()
     {
+        if (choicePanel == null || choiceButtons == null || choiceLabels == null)
+        {
+            Debug.LogError("Choice UI is not initialized.");
+            return;
+        }
+
+        if (currentScenario.choices.Length > choiceButtons.Length)
+        {
+            Debug.LogError(
+                "Choice count exceeds the number of Canvas buttons: " +
+                currentScenario.choices.Length
+            );
+            return;
+        }
+
         isChoiceShowing = true;
 
-        // 次回のステップで選択肢UIを接続する
-        Debug.Log("選択肢を表示する場面です");
+        float firstButtonY = (currentScenario.choices.Length - 1) * 44f;
+
+        for (int i = 0; i < choiceButtons.Length; i++)
+        {
+            bool hasChoice = i < currentScenario.choices.Length;
+            Button button = choiceButtons[i];
+            button.gameObject.SetActive(hasChoice);
+            button.interactable = hasChoice;
+
+            if (!hasChoice)
+                continue;
+
+            choiceLabels[i].text = currentScenario.choices[i].text;
+
+            RectTransform buttonRect = button.transform as RectTransform;
+            if (buttonRect != null)
+            {
+                buttonRect.anchoredPosition =
+                    new Vector2(0f, firstButtonY - i * 88f);
+                buttonRect.sizeDelta = new Vector2(560f, 72f);
+            }
+        }
+
+        choicePanel.SetActive(true);
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem != null)
+            eventSystem.SetSelectedGameObject(choiceButtons[0].gameObject);
+    }
+
+    private void InitializeChoiceUI()
+    {
+        if (choicePanel == null)
+        {
+            Debug.LogError("ChoicePanel is not assigned on NovelManager.");
+            return;
+        }
+
+        choicePanel.SetActive(false);
+        choiceButtons = choicePanel.GetComponentsInChildren<Button>(true);
+
+        if (choiceButtons.Length == 0)
+        {
+            Debug.LogError("No Canvas buttons were found in ChoicePanel.");
+            return;
+        }
+
+        choiceLabels = new TMP_Text[choiceButtons.Length];
+
+        for (int i = 0; i < choiceButtons.Length; i++)
+        {
+            int choiceIndex = i;
+            choiceLabels[i] =
+                choiceButtons[i].GetComponentInChildren<TMP_Text>(true);
+
+            if (choiceLabels[i] == null)
+            {
+                Debug.LogError(
+                    "Choice button has no TextMeshPro label: " +
+                    choiceButtons[i].name
+                );
+                choiceButtons = null;
+                choiceLabels = null;
+                return;
+            }
+
+            choiceButtons[i].onClick.AddListener(
+                () => SelectChoice(choiceIndex)
+            );
+        }
+    }
+
+    private void SelectChoice(int index)
+    {
+        if (!isChoiceShowing || currentScenario == null ||
+            index < 0 || index >= currentScenario.choices.Length)
+        {
+            return;
+        }
+
+        string nextId = currentScenario.choices[index].nextId;
+        if (string.IsNullOrEmpty(nextId))
+        {
+            Debug.LogError("Choice nextId is empty.");
+            return;
+        }
+
+        isChoiceShowing = false;
+
+        EventSystem eventSystem = EventSystem.current;
+        if (eventSystem != null)
+            eventSystem.SetSelectedGameObject(null);
+
+        choicePanel.SetActive(false);
+        ShowScenario(nextId);
     }
 }
